@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     struct sockaddr_in address;
     if (argc == 2) {
         if (strcmp(argv[1],"server") == 0) {
-            printf("%s","server running");
+            printf("%s\n","server running");
             int server_fd;
 
             int opt = 1;
@@ -39,9 +39,7 @@ int main(int argc, char* argv[]) {
             address.sin_port = htons(PORT);
 
             // Forcefully attaching socket to the port 8081
-            if (bind(server_fd, (struct sockaddr*)&address,
-                     sizeof(address))
-                < 0) {
+            if (bind(server_fd, (struct sockaddr*)&address, sizeof(address)) < 0) {
                 perror("bind failed");
                 exit(EXIT_FAILURE);
             }
@@ -61,8 +59,8 @@ int main(int argc, char* argv[]) {
         }
     } else if (argc == 3) {
         if (strcmp(argv[1],"ip") == 0) {
-            printf("%s","server running");
-
+            printf("%s","connecting to: ");
+            printf("%s\n",argv[2]);
             struct sockaddr_in serv_addr;
 
             if (( obj_socket = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
@@ -98,30 +96,19 @@ int main(int argc, char* argv[]) {
     if(process) {
         char message[256];
         const char* exitMsg = "exit";
-        //char *line;
-        //size_t len = 0;
-        //ssize_t lineSize = 0;
-        //free(line);
         do {
             scanf("%s",message);
             if(strcmp(message,exitMsg) == 0) {
                 break;
             }
             send(obj_socket, message, strlen(message), 0);
-            //free(line);
-
-
             printf("\t sent \n");
-
-
         } while (1);
         kill(process,SIGKILL);
     } else {
         char buffer[1024] = { 0 };
         do {
-
             read(obj_socket, buffer, 1024);
-
             printf("%s\n", buffer);
             for(int i = 0; i < 1024; i++) {
                 buffer[i] = 0;
