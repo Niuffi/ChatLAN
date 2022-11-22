@@ -93,24 +93,27 @@ int main(int argc, char* argv[]) {
     }
 
     pid_t process = fork();
-    if(process) {
+    if (process) {
         char message[256];
-        const char* exitMsg = "exit";
         do {
             scanf("%s",message);
-            if(strcmp(message,exitMsg) == 0) {
-                break;
-            }
             send(obj_socket, message, strlen(message), 0);
             printf("\t sent \n");
+            if (strcmp(message,"exit") == 0) {
+                break;
+            }
         } while (1);
         kill(process,SIGKILL);
     } else {
         char buffer[1024] = { 0 };
         do {
             read(obj_socket, buffer, 1024);
+            if (strcmp(buffer,"exit") == 0) {
+                printf("Conversation ended");
+                break;
+            }
             printf("%s\n", buffer);
-            for(int i = 0; i < 1024; i++) {
+            for (int i = 0; i < 1024; i++) {
                 buffer[i] = 0;
             }
         } while (1);
